@@ -1,0 +1,55 @@
+### register author
+POST http://localhost:5000/auth/users
+Content-Type: application/json
+
+{
+	"firstName":"author1",
+	"lastName":"",
+	"email":"author1@gmail.com",
+	"role":"AUTHOR",
+	"password":"author1",
+	"profileImageUrl":"http://example.com/avatars/user.png"
+}
+
+### create article
+POST http://localhost:5000/author-api/article
+Content-Type: application/json
+
+{
+	"author":"69b4e5e93fe990adc34eb02a",
+	"title":"Artical-1 by author1",
+	"category":"programming",
+	"content":"test artical on programming"
+}
+### read own articles
+GET http://localhost:5000/author-api/article
+
+### auther Login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+    "email":"author1@gmail.com",
+    "password":"author1"
+}
+
+### put updating the aouther id
+PUT http://localhost:5000/author-api/article
+Content-Type: application/json
+
+{
+    "articleId": "69b4e5e93fe990adc34eb02a ",
+    "title":" ",
+    "category":" ",
+    "content":" "
+}
+
+###
+PATCH http://localhost:5000/author-api/article
+Content-Type: application/json
+
+{
+    "articleId":"",
+    "IsArticleActive":false
+}
+###

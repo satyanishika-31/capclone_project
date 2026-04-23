@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import { useNavigate } from "react-router";
 
@@ -15,37 +16,39 @@ import {
   loadingClass,
 } from "../Styles/Common";
 import { useAuth } from "../Store/authStore";
+import { API_BASE_URL } from "../config/api";
 
 function WriteArticles() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
   const currentUser = useAuth((state) => state.currentUser);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm();
 
   //save article
   const submitArticle = async (articleObj) => {
     setLoading(true);
+    setApiError(null);
 
     //add authorId to articleObj
     articleObj.author = currentUser._id;
     try {
-      //set loading true
-      setLoading(true);
       //make POST req to save new article
-      let res = await axios.post("http://localhost:4000/author-api/article", articleObj, { withCredentials: true });
+      let res = await axios.post(`${API_BASE_URL}/author-api/article`, articleObj, { withCredentials: true });
       //navigate to AuthorArticles
       if (res.status === 201) {
+        toast.success(res.data?.message || "Article published successfully");
         navigate("../articles");
-        // navigate("./author-profile/articles");
       }
     } catch (err) {
-      // toast.error(err.response?.data?.error || "Failed to publish article");
+      const msg = err.response?.data?.error || err.response?.data?.message || "Failed to publish article";
+      setApiError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -122,6 +125,7 @@ function WriteArticles() {
         </button>
 
         {loading && <p className={loadingClass}>Publishing article...</p>}
+        {apiError && <p className={errorClass}>{apiError}</p>}
       </form>
     </div>
   );

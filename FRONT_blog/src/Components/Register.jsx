@@ -15,6 +15,7 @@ import { NavLink } from "react-router";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { API_BASE_URL } from "../config/api";
 
 function Register() {
   const {
@@ -24,24 +25,24 @@ function Register() {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const navigate= useNavigate()
+  const navigate = useNavigate();
 
   //When user registration submitted
   const onUserRegister = async (userObj) => {
     console.log(userObj);
     try {
       //start loading
-      setLoading(true)
-      setApiError(null)
+      setLoading(true);
+      setApiError(null);
       //make http post req to create user in backend
-      let res=await axios.post("http://localhost:5000/auth/users",userObj)
+      let res = await axios.post(`${API_BASE_URL}/auth/users`, userObj);
       //navigate to login
       if (res.status >= 200 && res.status < 300) {
         navigate("/login", { replace: true });
       }
     } catch (err) {
       console.log("err in registration", err);
-      setApiError(err.response?.data?.error || "Registration failed");
+      setApiError(err.response?.data?.error || err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,9 @@
 import { useParams, useLocation, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useAuth } from "../Store/authStore.js";
+import { API_BASE_URL } from "../config/api";
 import {
   articlePageWrapper,
   articleHeader,
@@ -49,7 +51,7 @@ function ArticleByID() {
       setLoading(true);
 
       try {
-        const res = await axios.get(`http://localhost:4000/user-api/article/${id}`, { withCredentials: true });
+        const res = await axios.get(`${API_BASE_URL}/user-api/article/${id}`, { withCredentials: true });
 
         setArticle(res.data.payload);
       } catch (err) {
@@ -60,7 +62,7 @@ function ArticleByID() {
     };
 
     getArticle();
-  }, [id]);
+  }, [article, id]);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleString("en-IN", {
@@ -79,7 +81,7 @@ function ArticleByID() {
 
     try {
       const res = await axios.patch(
-        "http://localhost:4000/author-api/articles",
+        `${API_BASE_URL}/author-api/article`,
         { articleId: article._id, isArticleActive: newStatus },
         { withCredentials: true },
       );
@@ -112,7 +114,7 @@ function ArticleByID() {
     //add artcileId
     commentObj.articleId = article._id;
     console.log(commentObj);
-    let res = await axios.put("http://localhost:4000/user-api/articles", commentObj, { withCredentials: true });
+    let res = await axios.put(`${API_BASE_URL}/user-api/articles`, commentObj, { withCredentials: true });
     if (res.status === 200) {
       toast.success(res.data.message);
       setArticle(res.data.payload);

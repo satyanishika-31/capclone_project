@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { useAuth } from "../Store/authStore";
+import { API_BASE_URL } from "../config/api";
 import {
   pageWrapper,
   headingClass,
@@ -26,7 +27,7 @@ function AdminUsers() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/admin-api/users", { withCredentials: true });
+      const res = await axios.get(`${API_BASE_URL}/admin-api/users`, { withCredentials: true });
       setUsers(res.data?.payload || []);
     } catch (err) {
       setError(err.response?.data?.message || err.response?.data?.error || "Failed to load users");
@@ -50,7 +51,7 @@ function AdminUsers() {
   const toggleUserStatus = async (email, currentStatus) => {
     try {
       const res = await axios.patch(
-        "http://localhost:5000/admin-api/user",
+        `${API_BASE_URL}/admin-api/user`,
         { email, isUserActive: !currentStatus },
         { withCredentials: true },
       );

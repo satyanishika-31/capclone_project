@@ -8,6 +8,12 @@ config()
 import jwt from 'jsonwebtoken'
 import { verifyToken } from '../middleware/VerifyToken.js'
 const {sign}=jwt
+const isProduction = process.env.NODE_ENV === 'production'
+const cookieOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+}
 export const commonApp=exp.Router()
 
 //route for registration
@@ -45,11 +51,7 @@ commonApp.post('/login',async(req,res) => {
     //create jwt
     const signedToken=sign({id:user._id,email:email,role:user.role},process.env.SECRET_KEY,{expiresIn:"1hr"})
     //set token to res header as httpOnly
-    res.cookie("token",signedToken,{
-        httpOnly:true,
-        secure:false,
-        sameSite:"lax"
-    })
+    res.cookie("token",signedToken,cookieOptions)
     //remove password from user document
     //convert documnet into js obj
     const userObj=user.toObject()
@@ -62,11 +64,7 @@ commonApp.post('/login',async(req,res) => {
 //route for logout
 commonApp.get('/logout', (req,res) => {
     //delete token from cookie storage
-    res.clearCookie("token",{
-        httpOnly:true,
-        secure:false,
-        sameSite:'lax'
-    })
+    res.clearCookie("token",cookieOptions)
     //send res
     res.status(200).json({message:"Logout successful"})
 })

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { create } from "zustand";
+import { API_BASE_URL } from "../config/api";
 
 export const useAuth = create((set) => ({
   currentUser: null,
@@ -10,9 +11,9 @@ export const useAuth = create((set) => ({
     //const { role, ...userCredObj } = userCredWithRole;
     try {
       //set loading true
-      set(stat=>({...stat,loading:true}))
+      set((stat) => ({ ...stat, loading: true }));
       //make api call
-      let res=await axios.post("http://localhost:5000/auth/login",userCred,{withCredentials:true})
+      let res = await axios.post(`${API_BASE_URL}/auth/login`, userCred, { withCredentials: true });
       //update state
       const loggedInUser = res.data?.payload || res.data?.user || res.data;
       set((stat) => ({
@@ -35,9 +36,14 @@ export const useAuth = create((set) => ({
   },
   logout: async () => {
     try {
-      //set loading state
-      //make logout api req
-      //update state
+      set((state) => ({ ...state, loading: true, error: null }));
+      await axios.get(`${API_BASE_URL}/auth/logout`, { withCredentials: true });
+      set({
+        currentUser: null,
+        loading: false,
+        isAuthenticated: false,
+        error: null,
+      });
     } catch (err) {
       set({
         loading: false,

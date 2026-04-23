@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { useAuth } from "../Store/authStore";
+import { API_BASE_URL } from "../config/api";
 
 import {
   articleCardClass,
@@ -24,7 +25,7 @@ function AuthorArticles() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log("user in author profile",user)
+  console.log("user in author profile", user);
   
   useEffect(() => {
     if (!user) return;
@@ -32,7 +33,7 @@ function AuthorArticles() {
     const getAuthorArticles = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:5000/author-api/article", {
+        const res = await axios.get(`${API_BASE_URL}/author-api/article`, {
           withCredentials: true,
         });
 
@@ -53,13 +54,6 @@ function AuthorArticles() {
   const openArticle = (article) => {
     navigate(`/article/${article._id}`, {
       state: article,
-    });
-  };
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-      dateStyle: "medium",
     });
   };
 
